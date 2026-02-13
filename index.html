@@ -166,8 +166,8 @@
             <i data-lucide="accessibility" class="w-14 h-14"></i>
         </div>
         
-        <h1 class="text-6xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">Vendor Governance <br/> <span class="text-[#0176d3]">Guide</span></h1>
-        <h2 class="text-2xl text-slate-500 font-medium mb-8 tracking-wide">Accessibility Standards & Engineering Best Practices</h2>
+        <h1 class="text-6xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">Accessibility Standards & Engineering Best Practices <br/> <span class="text-[#0176d3]">Guide</span></h1>
+       
 
         <!-- Added Purpose Note -->
         <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl max-w-xl w-full mb-10 text-left flex gap-4 shadow-sm relative z-10">
@@ -709,13 +709,176 @@
         </div>
     </div>
 
-    <!-- 9. Appearance & Zoom -->
+    <!-- 9. YouTube Accessibility Review Guide (NEW SECTION) -->
     <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
         <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
         <div class="notebook-content">
             <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
                 <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
                     <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">9</span>
+                    YouTube Review Guide
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            
+            <p class="text-slate-600 mb-8 text-lg font-medium">The main YouTube default settings that impact accessibility are below. These are especially relevant if you're reviewing video content for WCAG 2.2 compliance.</p>
+
+            <div class="space-y-12">
+                <!-- 1. Captions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-slate-200 pb-8">
+                    <div class="md:col-span-2">
+                        <h3 class="text-lg font-extrabold text-slate-800 mb-3">1. Captions (Subtitles) – OFF by default</h3>
+                        <p class="text-sm text-slate-600 mb-3">The CC (Closed Captions) button is usually off by default. Users must manually turn captions on unless they’ve enabled captions in their personal settings or browser accessibility settings force them on.</p>
+                        <p class="text-sm text-slate-600 mb-3">Auto-generated captions may appear if no captions are uploaded, but accuracy is inconsistent and they may not meet accessibility standards.</p>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-3 mt-3">
+                            <p class="text-xs font-bold text-red-800">Accessibility impact:</p>
+                            <p class="text-sm text-red-700">If captions are not enabled or provided properly → fails WCAG 1.2.2 (Captions - Prerecorded).</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg flex items-center justify-center border border-slate-200">
+                        <div class="text-center">
+                            <div class="px-3 py-1 bg-white border border-slate-300 rounded text-xs font-bold text-slate-400 mb-2">CC Off</div>
+                            <i data-lucide="arrow-down" class="w-4 h-4 text-slate-400 mx-auto mb-2"></i>
+                            <div class="px-3 py-1 bg-black text-white border border-black rounded text-xs font-bold">CC On</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Autoplay -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-slate-200 pb-8">
+                    <div class="md:col-span-2">
+                        <h3 class="text-lg font-extrabold text-slate-800 mb-3">2. Autoplay – Often ON (platform dependent)</h3>
+                        <p class="text-sm text-slate-600 mb-3">Autoplay is frequently enabled by default. Videos automatically start the next video.</p>
+                        <div class="bg-orange-50 border-l-4 border-orange-500 p-3 mt-3">
+                            <p class="text-xs font-bold text-orange-800">Accessibility impact:</p>
+                            <p class="text-sm text-orange-700 mb-2">Can affect users with Cognitive disabilities, Screen reader users, and Attention-related challenges.</p>
+                            <p class="text-xs font-mono text-orange-800">Related WCAG: 2.2.2 Pause, Stop, Hide; 2.3.1 Three Flashes</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg flex items-center justify-center border border-slate-200">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-600">Autoplay</span>
+                            <div class="w-8 h-4 bg-blue-600 rounded-full relative"><div class="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Audio Descriptions -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">3. Audio Descriptions – Not automatic</h3>
+                    <p class="text-sm text-slate-600 mb-2">YouTube does not automatically provide audio descriptions. Creators must upload a separate described version or a combined track.</p>
+                    <p class="text-sm text-red-600 font-bold">Accessibility impact: May fail WCAG 1.2.5 Audio Description (Prerecorded) if required.</p>
+                </div>
+
+                <!-- 4. Player Controls -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">4. Player Controls & Keyboard Navigation</h3>
+                    <div class="bg-slate-900 text-white p-4 rounded-lg mb-4 font-mono text-xs">
+                        <p>Space & K → Play/Pause</p>
+                        <p>C → Toggle captions</p>
+                        <p>M → Mute</p>
+                    </div>
+                    <p class="text-sm text-slate-600 mb-2">However: Embedded players may restrict functionality. Custom overlays (on enterprise sites) often break accessibility.</p>
+                    <p class="text-sm text-slate-600 mb-3">Single character keyboard shortcuts can inadvertently be activated by a speech input user who is attempting to dictate commands or other input.</p>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-3">
+                        <p class="text-xs font-bold text-red-800">Accessibility impact: Custom embeds sometimes fail:</p>
+                        <ul class="list-disc pl-4 text-sm text-red-700 font-mono mt-1">
+                            <li>2.1.1 Keyboard</li>
+                            <li>2.1.4 Character Key Shortcuts</li>
+                            <li>4.1.2 Name, Role, Value</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Caption Styling -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">5. Caption Styling (User-Controlled)</h3>
+                    <p class="text-sm text-slate-600 mb-2">Users can customize Font size, Background color, and Opacity.</p>
+                    <p class="text-sm text-slate-600"><strong>But:</strong> Default captions may not have optimal contrast. Enterprise embeds sometimes override styling.</p>
+                </div>
+
+                <!-- 6. iFrame Issues -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">6. Common Accessibility Issues with Embedded YouTube iFrames</h3>
+                    <p class="text-sm text-slate-600 mb-4">When YouTube videos are embedded using an <code>&lt;iframe&gt;</code>, the accessibility experience often depends on how the embed is implemented.</p>
+                    
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 mb-4">
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm">1️⃣ Missing or Non-Descriptive title Attribute</h4>
+                        <p class="text-xs text-red-600 mb-2 font-mono">❌ &lt;iframe src="..."&gt;&lt;/iframe&gt;</p>
+                        <p class="text-xs text-green-600 mb-2 font-mono">✅ &lt;iframe src="..." title="Product Overview Video – Spring Release"&gt;&lt;/iframe&gt;</p>
+                        <p class="text-sm text-slate-600 mt-2"><strong>Why it matters:</strong> Screen readers announce: “Frame” with no context. Fails WCAG 4.1.2 (Name, Role, Value).</p>
+                    </div>
+                </div>
+
+                <!-- 7. Dialog Problems -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">7. Dialog Problems</h3>
+                    <p class="text-sm text-slate-600 mb-2">‘More videos’ dialog behaves differently from other dialogs in player. A <span class="font-bold text-red-600">Critical-impact keyboard trap</span> exists in the Settings > Playback speed menu.</p>
+                    <div class="bg-orange-50 border-l-4 border-orange-500 p-3 mt-3">
+                        <p class="text-xs font-bold text-orange-800">Accessibility impact:</p>
+                        <p class="text-sm text-orange-700">At the very least impactful, the lack of predictable navigation patterns within dialogs and menus within the video player erode user trust in the UI. At the worst impact, the keyboard trap will force a screen reader user to completely refresh the page in order to regain control over the UI.</p>
+                    </div>
+                </div>
+
+                <!-- 8. Focus Contrast -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">8. Focus Contrast</h3>
+                    <ul class="list-disc pl-5 text-sm text-slate-600 mb-3">
+                        <li>Light blue focus indicator is off-brand.</li>
+                        <li>Experience visually appears to be disconnected from salesforce.com.</li>
+                        <li>Light video backgrounds render indicator almost invisible.</li>
+                    </ul>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3">
+                        <p class="text-xs font-bold text-blue-800">Accessibility impact:</p>
+                        <p class="text-sm text-blue-700">Users who are low vision will experience difficulty in being able to visually determine their focus position in the page.</p>
+                    </div>
+                </div>
+
+                <!-- 9. Contrast of Controls -->
+                <div class="border-b border-slate-200 pb-8">
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-3">9. Contrast of Controls & Content</h3>
+                    <p class="text-sm text-slate-600 mb-3">Gradient mid-ground is insufficiently dark when paired with light video background. Lack of control over always-light-colored text content and icon buttons in foreground render these elements difficult to see or invisible in some cases.</p>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-3">
+                        <p class="text-xs font-bold text-red-800">Accessibility impact:</p>
+                        <p class="text-sm text-red-700">We basically guarantee that the video title, top video controls, progress bar and bottom player controls will be very difficult for low vision users and users who happen to be in a bright environment to be able to accurately see.</p>
+                    </div>
+                </div>
+
+                <!-- Enterprise Review Table -->
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-800 mb-4">From an Enterprise Accessibility Review Perspective</h3>
+                    <p class="text-sm text-slate-600 mb-4">If you’re reviewing YouTube embeds (like Salesforce+ or regional sites), check:</p>
+                    
+                    <div class="overflow-hidden rounded-lg border border-slate-200">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-100 text-slate-700">
+                                <tr>
+                                    <th class="p-3 border-b border-slate-200">Checkpoint</th>
+                                    <th class="p-3 border-b border-slate-200">Why It Matters</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr><td class="p-3 font-bold">Captions uploaded (not auto only)</td><td class="p-3 text-slate-600">Legal compliance</td></tr>
+                                <tr><td class="p-3 font-bold">Default CC state</td><td class="p-3 text-slate-600">User discoverability</td></tr>
+                                <tr><td class="p-3 font-bold">Autoplay disabled</td><td class="p-3 text-slate-600">Cognitive accessibility</td></tr>
+                                <tr><td class="p-3 font-bold">Keyboard accessible player</td><td class="p-3 text-slate-600">WCAG 2.1.1</td></tr>
+                                <tr><td class="p-3 font-bold">No custom controls breaking native player</td><td class="p-3 text-slate-600">Common enterprise issue</td></tr>
+                                <tr><td class="p-3 font-bold">Cookies and data privacy</td><td class="p-3 text-slate-600">GDPR</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Appearance & Zoom -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">10</span>
                     Appearance & Zoom
                 </h2>
                 <span class="badge-standard">Level AA • Standard</span>
