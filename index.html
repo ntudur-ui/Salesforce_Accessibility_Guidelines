@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Notebook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Indie+Flower&family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            -webkit-print-color-adjust: exact;
+        }
+        .notebook-page {
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-left: 10px solid #0176d3; /* Salesforce Blue */
+            border-radius: 16px;
+            position: relative;
+            page-break-inside: avoid;
+            page-break-after: always;
+            min-height: 900px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .notebook-content {
+            flex: 1;
+        }
+        .notebook-holes {
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            height: 100%;
+            z-index: 10;
+        }
+        .hole {
+            width: 14px;
+            height: 14px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2), 0 1px 0 white;
+        }
+        .handwritten {
+            font-family: 'Indie Flower', cursive;
+            color: #475569;
+        }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #ec4899; /* Pink-500 */
+            border: 1px solid #e2e8f0;
+        }
+        /* Engineering Code Block Styles */
+        pre {
+            background: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+        }
+        .code-tag { color: #f472b6; } /* Pink */
+        .code-attr { color: #93c5fd; } /* Blue */
+        .code-val { color: #86efac; } /* Green */
+        .code-comment { color: #64748b; font-style: italic; } /* Gray */
+
+        /* Mock UI Container */
+        .mock-ui {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 280px;
+            position: relative;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .mock-label {
+            position: absolute;
+            bottom: -12px;
+            right: -10px;
+            background: #fef08a; /* Yellow-200 */
+            color: #854d0e;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 4px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            font-family: 'Indie Flower', cursive;
+            transform: rotate(-2deg);
+            border: 1px solid #fde047;
+        }
+
+        /* Badges */
+        .badge-essential {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-standard {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h1, h2, h3 { letter-spacing: -0.025em; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .notebook-page {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+                border-left: 10px solid #0176d3;
+                margin: 0;
+                width: 100%;
+                height: 100vh;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <!-- Cover Page -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 flex flex-col justify-center items-center text-center p-16 bg-white relative">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        
+        <!-- Decorative Background Element -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/4"></div>
+
+        <div class="w-28 h-28 bg-gradient-to-br from-[#0176d3] to-[#005fb2] rounded-3xl flex items-center justify-center mb-10 shadow-xl text-white transform -rotate-3">
+            <i data-lucide="accessibility" class="w-14 h-14"></i>
+        </div>
+        
+        <h1 class="text-6xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">Vendor Governance <br/> <span class="text-[#0176d3]">Guide</span></h1>
+        <h2 class="text-2xl text-slate-500 font-medium mb-8 tracking-wide">Accessibility Standards & Engineering Best Practices</h2>
+
+        <!-- Added Purpose Note -->
+        <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl max-w-xl w-full mb-10 text-left flex gap-4 shadow-sm relative z-10">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 shadow-sm shrink-0 border border-blue-100">
+                <i data-lucide="info" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-blue-900 text-sm mb-1 uppercase tracking-wide">What is this for?</h3>
+                <p class="text-sm text-blue-800 leading-relaxed font-medium">
+                    This guide defines the mandatory engineering standards for all Salesforce vendors. Use these checklists to validate <span class="font-bold">WCAG 2.1 compliance</span> during design and development phases, prior to final QA handoff.
+                </p>
+            </div>
+        </div>
+        
+        <div class="bg-white border border-slate-200 p-8 rounded-2xl max-w-xl w-full text-left shadow-lg relative z-10">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-bold text-slate-800 uppercase tracking-widest text-xs">Compliance Standard</h3>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">Mandatory</span>
+            </div>
+            
+            <p class="text-3xl font-bold text-slate-800 mb-2">WCAG 2.1 <span class="text-[#0176d3]">Level A & AA</span></p>
+            <p class="text-base text-slate-500 mb-4 flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-4 h-4"></i> ADA & Section 508 Compliant
+            </p>
+            
+            <div class="mb-2">
+                <p class="text-sm text-[#0176d3] font-medium flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="hover:underline">W3C ARIA APG Patterns</a>
+                </p>
+                <p class="text-xs text-slate-500 mt-1 pl-6 leading-relaxed">
+                    <strong>Note:</strong> Use these official blueprints for complex components (e.g., Modals, Tabs, Menus) to ensure correct keyboard and screen reader behavior.
+                </p>
+            </div>
+            
+            <div class="h-px bg-slate-100 w-full my-6"></div>
+            
+            <h3 class="font-bold text-slate-800 uppercase tracking-widest text-xs mb-4">Applies To</h3>
+            <ul class="text-sm text-slate-600 space-y-3 font-medium">
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600"><i data-lucide="check" class="w-3 h-3"></i></div>
+                    All Third-Party Vendors & Agencies
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600"><i data-lucide="check" class="w-3 h-3"></i></div>
+                    Salesforce+ & Campaign Microsites
+                </li>
+                <li class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600"><i data-lucide="check" class="w-3 h-3"></i></div>
+                    Embedded Components & Widgets
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 1. Content & Links -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">1</span>
+                    Content & Links
+                </h2>
+                <span class="badge-standard">Level AA • Standard</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Avoid "Click here". Use descriptive text like "Download Report" to provide context.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Ensure accessible name matches visible label.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Avoid empty <code>&lt;button&gt;</code> or <code>&lt;a&gt;</code> elements.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Screen reader users, Cognitive disabilities</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.4.4 Link Purpose (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="space-y-6 w-full max-w-xs">
+                        <!-- Bad Example -->
+                        <div class="p-5 bg-white rounded-lg border border-red-200 shadow-sm opacity-75">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-red-500 uppercase">Don't Do This</span>
+                                <i data-lucide="x-circle" class="w-4 h-4 text-red-500"></i>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-2">To see the audit report:</p>
+                            <a href="#" class="text-blue-600 underline text-sm">Click here</a>
+                        </div>
+                        <!-- Good Example -->
+                        <div class="p-5 bg-white rounded-lg border border-green-200 shadow-md transform scale-105">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-green-600 uppercase">Do This</span>
+                                <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-2">Review our findings:</p>
+                            <a href="#" class="text-[#0176d3] font-bold text-sm flex items-center gap-1 hover:underline">
+                                Download 2025 Audit Report <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mock-label">Context is key!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Global Code -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">2</span>
+                    Global Code
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Define language, use unique titles, and standard landmarks.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> <code>&lt;html lang="en"&gt;</code> required.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Unique <code>&lt;title&gt;</code> per page.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> No duplicate IDs.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Screen reader users, Multilingual users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">3.1.1 Language (A)</span>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.4.2 Title (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example: Browser Structure -->
+                <div class="mock-ui border-none p-0 overflow-hidden bg-transparent">
+                    <div class="w-full h-full bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden shadow-lg">
+                        <!-- Browser Tab Bar -->
+                        <div class="bg-slate-100 p-3 flex gap-3 items-center border-b border-slate-200">
+                            <div class="flex gap-1.5">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <!-- Title Tag Visualization -->
+                            <div class="bg-white px-4 py-1.5 text-xs font-medium rounded-md text-slate-600 flex-grow shadow-sm border border-slate-200 truncate flex items-center gap-2">
+                                <i data-lucide="globe" class="w-3 h-3 text-blue-500"></i>
+                                &lt;title&gt;Vendor Portal - Home&lt;/title&gt;
+                            </div>
+                        </div>
+                        <!-- Semantic Landmarks -->
+                        <div class="flex-grow p-6 flex flex-col gap-4 bg-slate-50/50">
+                            <div class="h-12 bg-white border-2 border-blue-200 border-dashed rounded-lg flex items-center justify-center text-xs text-blue-600 font-mono font-bold shadow-sm">
+                                &lt;header&gt;
+                            </div>
+                            <div class="flex flex-grow gap-4 min-h-[100px]">
+                                <div class="w-1/4 bg-white border-2 border-purple-200 border-dashed rounded-lg flex items-center justify-center text-xs text-purple-600 font-mono font-bold shadow-sm">
+                                    &lt;nav&gt;
+                                </div>
+                                <div class="flex-grow bg-white border-2 border-emerald-200 border-dashed rounded-lg flex items-center justify-center text-xs text-emerald-600 font-mono font-bold shadow-sm">
+                                    &lt;main&gt;
+                                </div>
+                            </div>
+                            <div class="h-10 bg-white border-2 border-slate-300 border-dashed rounded-lg flex items-center justify-center text-xs text-slate-500 font-mono font-bold shadow-sm">
+                                &lt;footer&gt;
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mock-label">Semantic Layout</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Keyboard Accessibility -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">3</span>
+                    Keyboard Accessibility
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Visible focus outline, logical tab order, and NO keyboard traps.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Use native controls.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Trap focus in modals.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Ensure <code>tabindex</code> is correct.</li>
+                        </ul>
+                        <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-medium text-slate-500">
+                            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="flex items-center gap-1.5 hover:text-[#0176d3] transition-colors"><i data-lucide="external-link" class="w-3 h-3"></i> W3C ARIA Component Patterns</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Motor disabilities, Power users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.1.1 Keyboard (A)</span>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.4.7 Focus (AA)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="space-y-10 w-full flex flex-col items-center">
+                        <button class="px-8 py-3 bg-slate-100 text-slate-400 rounded-lg text-sm font-medium border border-slate-200 cursor-not-allowed">
+                            Unfocused Button
+                        </button>
+                        
+                        <div class="relative group">
+                            <button class="px-8 py-3 bg-[#0176d3] text-white rounded-lg text-sm font-bold shadow-lg ring-4 ring-blue-300 ring-offset-2 transform transition hover:-translate-y-0.5">
+                                Focused Button
+                            </button>
+                            <!-- Pointer -->
+                            <div class="absolute -right-28 top-3 flex items-center gap-2 animate-pulse">
+                                <i data-lucide="arrow-left" class="w-5 h-5 text-blue-600"></i>
+                                <span class="text-xs text-blue-700 font-bold bg-blue-50 px-2 py-1 rounded">Visible Ring</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mock-label">Never hide outlines!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Images -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">4</span>
+                    Images
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">All images need <code>alt</code>. Decorative use empty alt. Charts need summaries.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Validate no missing <code>alt</code> attributes.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Hide decorative SVGs with <code>aria-hidden="true"</code>.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Blind users, Screen reader users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.1.1 Non-text Content (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example: Image with Alt Badge -->
+                <div class="mock-ui">
+                    <div class="relative group w-full max-w-xs bg-white p-5 rounded-xl shadow-md border border-slate-200">
+                        <div class="w-full h-44 bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
+                             <i data-lucide="bar-chart-2" class="w-20 h-20 text-slate-300"></i>
+                             <!-- Alt Text Simulation Badge -->
+                             <div class="absolute bottom-3 left-3 right-3 bg-slate-900/90 backdrop-blur-md text-white text-[11px] px-4 py-3 rounded-lg font-mono border border-white/10 shadow-xl">
+                                <span class="text-pink-400 font-bold">alt=</span>"Q3 Sales Revenue Chart showing 20% growth year-over-year"
+                             </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono font-medium">
+                            <i data-lucide="image" class="w-3 h-3"></i> revenue-report.png
+                        </div>
+                    </div>
+                    <div class="mock-label">Describe the meaning!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Headings Structure -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">5</span>
+                    Headings Structure
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">One H1 per page. Logical order (H1 → H2 → H3). No skipping levels.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Don't use headings for styling.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Check hierarchy with tools.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Screen reader users, Cognitive disabilities</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.3.1 Info (A)</span>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.4.6 Headings (AA)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="w-full max-w-xs space-y-4 bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <div class="p-3 border-l-4 border-blue-600 bg-blue-50/50 rounded-r-md font-bold text-lg text-slate-900 flex justify-between items-center">
+                            H1: Page Title
+                            <span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold">1</span>
+                        </div>
+                        <div class="p-2 border-l-4 border-blue-400 bg-white ml-6 rounded-r-md font-semibold text-slate-700 flex justify-between items-center shadow-sm">
+                            H2: Section
+                            <span class="text-[10px] bg-blue-400 text-white px-2 py-0.5 rounded-full font-bold">2</span>
+                        </div>
+                        <div class="p-2 border-l-4 border-blue-300 bg-slate-50/30 ml-12 rounded-r-md text-sm text-slate-600 flex justify-between items-center border border-slate-100">
+                            H3: Sub-section
+                            <span class="text-[10px] bg-blue-300 text-white px-2 py-0.5 rounded-full font-bold">3</span>
+                        </div>
+                        <div class="p-2 border-l-4 border-blue-400 bg-white ml-6 rounded-r-md font-semibold text-slate-700 flex justify-between items-center shadow-sm">
+                            H2: Section
+                            <span class="text-[10px] bg-blue-400 text-white px-2 py-0.5 rounded-full font-bold">2</span>
+                        </div>
+                    </div>
+                    <div class="mock-label">Hierarchy matters!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Forms & Validation -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">6</span>
+                    Forms & Validation
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Labels linked via <code>for/id</code>. Errors linked via <code>aria-describedby</code>.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Use <code>required</code> attribute.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Error summary with focus shift.</li>
+                        </ul>
+                        <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-medium text-slate-500">
+                            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="flex items-center gap-1.5 hover:text-[#0176d3] transition-colors"><i data-lucide="external-link" class="w-3 h-3"></i> W3C ARIA Component Patterns</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Screen reader users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">3.3.1 Error ID (A)</span>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">3.3.2 Labels (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="w-full max-w-xs bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <label for="email" class="block text-sm font-bold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" class="w-full p-2.5 border-2 border-red-500 rounded-lg bg-red-50 outline-none ring-4 ring-red-100/50 transition-all" value="invalid-email" aria-describedby="email-error">
+                        <div id="email-error" class="flex items-start gap-2 mt-3 p-3 bg-red-50 text-xs text-red-700 font-bold rounded-lg border border-red-200">
+                            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 mt-0.5"></i> 
+                            <span>Please enter a valid email address containing an '@' symbol.</span>
+                        </div>
+                    </div>
+                    <div class="mock-label">Link errors via aria!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Tables -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">7</span>
+                    Tables
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Use <code>&lt;th scope="col"&gt;</code> and add <code>&lt;caption&gt;</code>.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Avoid tables for layout.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Validate header associations.</li>
+                        </ul>
+                        <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-medium text-slate-500">
+                            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="flex items-center gap-1.5 hover:text-[#0176d3] transition-colors"><i data-lucide="external-link" class="w-3 h-3"></i> W3C ARIA Component Patterns</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Screen reader users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.3.1 Info (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="w-full bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+                        <table class="w-full text-sm text-left">
+                            <caption class="p-3 text-xs text-slate-500 font-bold bg-slate-50 border-b border-slate-200 uppercase tracking-wide">Q4 Sales Performance 2025</caption>
+                            <thead class="bg-slate-800 text-white">
+                                <tr>
+                                    <th scope="col" class="p-4 font-semibold text-xs uppercase tracking-wider">Region</th>
+                                    <th scope="col" class="p-4 font-semibold text-xs uppercase tracking-wider text-right">Revenue</th>
+                                    <th scope="col" class="p-4 font-semibold text-xs uppercase tracking-wider text-right">Growth</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-4 font-medium text-slate-800">North America</td>
+                                    <td class="p-4 text-slate-600 text-right font-mono">$50,400</td>
+                                    <td class="p-4 text-emerald-600 font-bold text-right">+12%</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-4 font-medium text-slate-800">EMEA</td>
+                                    <td class="p-4 text-slate-600 text-right font-mono">$75,200</td>
+                                    <td class="p-4 text-emerald-600 font-bold text-right">+8%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mock-label">Scope is mandatory!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Media & Video -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">8</span>
+                    Media & Video
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Upload captions (not auto). Disable autoplay. Provide transcripts.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Meaningful iframe title.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> No custom overlays.</li>
+                        </ul>
+                        <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-medium text-slate-500">
+                            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="flex items-center gap-1.5 hover:text-[#0176d3] transition-colors"><i data-lucide="external-link" class="w-3 h-3"></i> W3C ARIA Component Patterns</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Deaf users, Blind users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.2.2 Captions (A)</span>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.2.2 Pause (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="w-full aspect-video bg-black rounded-xl relative flex items-center justify-center group overflow-hidden shadow-2xl border border-slate-700">
+                         <div class="absolute inset-0 bg-gradient-to-tr from-slate-900 to-slate-800 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 cursor-pointer hover:bg-white/20 transition transform hover:scale-110">
+                                <i data-lucide="play" class="w-8 h-8 text-white fill-current ml-1"></i>
+                            </div>
+                         </div>
+                         <!-- Player Controls -->
+                         <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent flex items-center px-6 gap-5">
+                            <i data-lucide="play" class="w-5 h-5 text-white cursor-pointer hover:text-blue-400"></i>
+                            <div class="h-1.5 bg-white/20 flex-grow rounded-full cursor-pointer relative group/bar">
+                                <div class="w-1/3 h-full bg-[#0176d3] rounded-full relative">
+                                    <div class="absolute -right-2 -top-1.5 w-4 h-4 bg-white rounded-full shadow opacity-0 group-hover/bar:opacity-100 transition"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="px-2 py-1 bg-white text-black text-[10px] font-bold rounded cursor-pointer border border-white hover:bg-gray-200 shadow-sm transition">CC</div>
+                                <i data-lucide="volume-2" class="w-5 h-5 text-white cursor-pointer hover:text-blue-400"></i>
+                            </div>
+                         </div>
+                         <!-- Captions Overlay -->
+                         <div class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/70 px-4 py-2 rounded-lg text-white text-sm font-medium backdrop-blur-sm border border-white/10">
+                            Welcome to the Salesforce Platform.
+                         </div>
+                    </div>
+                    <div class="mock-label">Enable Manual CC</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Appearance & Zoom -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">9</span>
+                    Appearance & Zoom
+                </h2>
+                <span class="badge-standard">Level AA • Standard</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Support 200% text resize. No horizontal scroll at 320px.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Use relative units (rem/em).</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Avoid fixed heights.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Low vision users, Mobile users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.4.4 Resize (AA)</span>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.4.10 Reflow (AA)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="bg-white p-8 border border-slate-200 rounded-xl w-full shadow-md">
+                        <p class="text-[10px] text-slate-400 mb-2 uppercase tracking-wide font-bold">Standard Text (1rem)</p>
+                        <p class="text-base text-slate-600 mb-8 border-b pb-6 leading-relaxed">
+                            Salesforce is the customer company. We bring companies and customers together.
+                        </p>
+                        
+                        <p class="text-[10px] text-slate-400 mb-2 uppercase tracking-wide font-bold">200% Zoom (2rem)</p>
+                        <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                            <p class="text-3xl text-slate-900 leading-tight font-medium">
+                                Salesforce is the customer company.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mock-label">No horizontal scroll!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Color Contrast -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">10</span>
+                    Color Contrast
+                </h2>
+                <span class="badge-standard">Level AA • Standard</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">4.5:1 normal text. 3:1 large text. 3:1 icons & borders.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Use design tokens.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Validate with analyzer.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Low vision users, Aging users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">1.4.3 Contrast (AA)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="flex flex-col gap-5 w-full">
+                        <!-- Fail Card -->
+                        <div class="flex items-center justify-between bg-white p-5 rounded-lg border shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500"></div>
+                            <span class="text-slate-300 font-bold text-xl">Light Gray Text</span>
+                            <div class="text-right">
+                                <span class="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded font-bold uppercase border border-red-100">FAIL (2.1:1)</span>
+                            </div>
+                        </div>
+                        <!-- Pass Card Light -->
+                        <div class="flex items-center justify-between bg-white p-5 rounded-lg border shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
+                            <span class="text-slate-800 font-bold text-xl">Dark Gray Text</span>
+                            <div class="text-right">
+                                <span class="bg-emerald-50 text-emerald-600 text-[10px] px-2 py-1 rounded font-bold uppercase border border-emerald-100">PASS (4.5:1)</span>
+                            </div>
+                        </div>
+                        <!-- Pass Card Brand -->
+                         <div class="flex items-center justify-between bg-[#0176d3] p-5 rounded-lg border border-blue-600 shadow-sm group relative overflow-hidden transition-all hover:shadow-md">
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-white"></div>
+                            <span class="text-white font-bold text-xl">White on Blue</span>
+                            <div class="text-right">
+                                <span class="bg-white/20 text-white text-[10px] px-2 py-1 rounded font-bold uppercase backdrop-blur-md">PASS (4.5:1)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. Animation & Motion -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">11</span>
+                    Animation & Motion
+                </h2>
+                <span class="badge-essential">Level A • Essential</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Pause auto-rotating content. Respect <code>prefers-reduced-motion</code>.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <pre>@media (prefers-reduced-motion) {
+  <span class="code-tag">animation</span>: <span class="code-val">none</span>;
+}</pre>
+                        <div class="mt-4 pt-3 border-t border-slate-700/50 text-xs font-medium text-slate-400">
+                            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="flex items-center gap-1.5 hover:text-white transition-colors"><i data-lucide="external-link" class="w-3 h-3"></i> W3C ARIA Component Patterns</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Vestibular disorders</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.2.2 Pause (A)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="relative w-full h-48 bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center overflow-hidden border border-blue-200 shadow-md">
+                        <!-- Animated Content -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-slate-400/20 text-6xl font-black uppercase tracking-tighter animate-pulse">Carousel</span>
+                        </div>
+                        
+                        <!-- Control Button -->
+                        <button class="z-10 bg-white/90 backdrop-blur border border-slate-200 text-slate-700 px-5 py-2.5 rounded-full shadow-lg text-sm font-bold flex items-center gap-2.5 hover:bg-white hover:scale-105 active:scale-95 transition-all">
+                            <i data-lucide="pause-circle" class="w-5 h-5 text-blue-600 fill-blue-50"></i> 
+                            Pause Animation
+                        </button>
+                    </div>
+                    <div class="mock-label">Controls required!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. Toasts & Live Regions -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">12</span>
+                    Toasts & Live Regions
+                </h2>
+                <span class="badge-standard">Level AA • Standard</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Use <code>role="alert"</code> or <code>aria-live</code>. Keep visible.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <pre>&lt;<span class="code-tag">div</span> <span class="code-attr">role</span>=<span class="code-val">"alert"</span>&gt;
+  Changes saved
+&lt;/<span class="code-tag">div</span>&gt;</pre>
+                        <div class="mt-4 pt-3 border-t border-slate-700/50 text-xs font-medium text-slate-400">
+                            <a href="https://www.w3.org/WAI/ARIA/apg/patterns/" target="_blank" class="flex items-center gap-1.5 hover:text-white transition-colors"><i data-lucide="external-link" class="w-3 h-3"></i> W3C ARIA Component Patterns</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Screen reader users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">4.1.3 Status (AA)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="w-full h-full bg-white relative rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                        <!-- Header -->
+                        <div class="h-12 bg-slate-50 w-full border-b mb-6 flex items-center px-5">
+                            <div class="w-24 h-2.5 bg-slate-200 rounded-full"></div>
+                        </div>
+                        <!-- Content -->
+                        <div class="h-2.5 bg-slate-100 w-2/3 mx-6 mb-4 rounded-full"></div>
+                        <div class="h-2.5 bg-slate-100 w-1/2 mx-6 mb-4 rounded-full"></div>
+                        <div class="h-2.5 bg-slate-100 w-3/4 mx-6 rounded-full"></div>
+                        
+                        <!-- Toast -->
+                        <div class="absolute top-16 right-5 bg-slate-800 text-white p-4 rounded-lg shadow-2xl flex items-start gap-3 w-72 border border-slate-700 animate-[bounce_1s_infinite]">
+                            <div class="bg-green-500/20 p-1 rounded-full">
+                                <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold leading-none mb-1">Changes Saved</p>
+                                <p class="text-xs text-slate-400 leading-tight">Your profile has been updated successfully.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mock-label">role="alert"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. Mobile & Touch -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">13</span>
+                    Mobile & Touch
+                </h2>
+                <span class="badge-standard">Level AA • Standard</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <div class="mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3">🎯 Recommendation</h3>
+                        <p class="text-slate-700 leading-relaxed text-lg">Adequate spacing. Support portrait/landscape. Min 24px target.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-4">🛠 Engineering</h3>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Minimum 24px touch target.</li>
+                            <li class="flex items-start gap-3"><i data-lucide="terminal" class="w-5 h-5 text-pink-500 mt-0.5"></i> Avoid horizontal scroll.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">♿ Who Is Impacted</h3>
+                        <p class="text-sm text-slate-600 mb-4">Motor disabilities, Mobile users</p>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-2">📘 WCAG 2.1</h3>
+                        <span class="inline-block bg-slate-100 px-3 py-1.5 rounded-md text-xs text-slate-600 font-mono font-bold border border-slate-200">2.5.5 Target Size (AA)</span>
+                    </div>
+                </div>
+                <!-- Visual Example -->
+                <div class="mock-ui">
+                    <div class="flex gap-10 items-center justify-center bg-white p-8 rounded-xl shadow-md border border-slate-200 w-full">
+                        <!-- Bad -->
+                        <div class="flex flex-col items-center group">
+                            <button class="w-6 h-6 bg-red-50 text-red-500 rounded flex items-center justify-center border border-red-200 shadow-sm transition group-hover:scale-110">
+                                <i data-lucide="x" class="w-3 h-3"></i>
+                            </button>
+                            <span class="text-[10px] text-red-500 mt-3 font-bold uppercase tracking-wide">Too Small (20px)</span>
+                        </div>
+                        
+                        <div class="h-16 w-px bg-slate-200"></div>
+
+                        <!-- Good -->
+                        <div class="flex flex-col items-center group">
+                            <div class="relative">
+                                <button class="w-14 h-14 bg-green-50 text-green-600 rounded-full flex items-center justify-center border-2 border-green-100 shadow-sm transition group-hover:scale-105 group-hover:shadow-md group-hover:border-green-200">
+                                    <i data-lucide="check" class="w-8 h-8"></i>
+                                </button>
+                                <!-- Rulers -->
+                                <div class="absolute -left-3 top-0 bottom-0 w-px bg-blue-400 opacity-0 group-hover:opacity-30 border-l border-dashed transition-opacity"></div>
+                                <div class="absolute -right-3 top-0 bottom-0 w-px bg-blue-400 opacity-0 group-hover:opacity-30 border-r border-dashed transition-opacity"></div>
+                            </div>
+                            <span class="text-[10px] text-green-600 mt-3 font-bold uppercase tracking-wide">Ideal (48px+)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Governance Gate -->
+    <div class="notebook-page max-w-4xl mx-auto rounded-lg overflow-hidden mb-12 p-12">
+        <div class="notebook-holes"><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div></div>
+        <div class="notebook-content">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-100 pb-4">
+                <h2 class="text-3xl font-bold text-slate-800 flex items-center gap-4">
+                    <span class="bg-blue-50 text-[#0176d3] w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm">14</span>
+                    Governance Gate
+                </h2>
+                <span class="bg-slate-800 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm">Validation</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <p class="text-slate-600 mb-8 text-lg leading-relaxed">Vendors must check off these items before production handoff to ensure compliance.</p>
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="keyboard" class="w-5 h-5 text-blue-600"></i> Manual Testing</h3>
+                            <ul class="list-disc pl-5 text-sm text-slate-600 space-y-2 marker:text-blue-400">
+                                <li><strong>Keyboard-only navigation:</strong> Ensure all interactive elements are reachable and usable without a mouse.</li>
+                                <li><strong>Screen Reader:</strong> Test critical flows with Safari + VoiceOver (Mac) or NVDA (Windows).</li>
+                                <li><strong>Zoom:</strong> Verify layout at 200% browser zoom.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-6">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center">
+                        <h3 class="text-slate-800 font-bold text-lg mb-4">Enterprise Review</h3>
+                        <div class="text-left space-y-3 w-full">
+                            <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-blue-50 hover:border-blue-100 transition group">
+                                <input type="checkbox" checked class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                                <span class="text-sm font-medium text-slate-700 group-hover:text-blue-800">WCAG 2.1 Level A Compliance</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer hover:bg-blue-50 hover:border-blue-100 transition group">
+                                <input type="checkbox" checked class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                                <span class="text-sm font-medium text-slate-700 group-hover:text-blue-800">WCAG 2.1 Level AA Compliance</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Visual Example: QA Board -->
+                    <div class="w-full bg-slate-100 rounded-xl border border-slate-300 p-4 flex gap-3 shadow-inner h-48">
+                        <!-- Column 1 -->
+                        <div class="flex-1 flex flex-col gap-2">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1">To Do</div>
+                            <div class="bg-white p-2.5 rounded shadow-sm border border-slate-200 text-[10px] text-slate-600">
+                                Feature: Dark Mode
+                            </div>
+                        </div>
+                        <!-- Column 2 -->
+                        <div class="flex-1 flex flex-col gap-2">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1">Testing</div>
+                            <div class="bg-white p-2.5 rounded shadow-sm border-l-4 border-orange-400 text-[10px] text-slate-800 font-medium">
+                                Fix: Focus Trap
+                                <div class="mt-2 flex gap-1"><span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded text-[9px] font-bold border border-red-100">BLOCKER</span></div>
+                            </div>
+                        </div>
+                        <!-- Column 3 -->
+                        <div class="flex-1 flex flex-col gap-2">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1">Done</div>
+                            <div class="bg-white p-2.5 rounded shadow-sm border-l-4 border-green-500 text-[10px] text-slate-400 line-through opacity-75">
+                                Audit: Homepage
+                            </div>
+                            <div class="bg-white p-2.5 rounded shadow-sm border-l-4 border-green-500 text-[10px] text-slate-400 line-through opacity-75">
+                                Setup: Evinced
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 italic text-center">Track accessibility defects as Blockers/P0.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
